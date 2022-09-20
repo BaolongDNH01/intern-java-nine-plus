@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,6 +31,7 @@ import com.nineplus.pharmacy.constant.CommonConstants;
 import com.nineplus.pharmacy.model.TUser;
 import com.nineplus.pharmacy.service.TUserServices;
 
+@PropertySource("classpath:application.properties")
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private String PREFIX_TOKEN;

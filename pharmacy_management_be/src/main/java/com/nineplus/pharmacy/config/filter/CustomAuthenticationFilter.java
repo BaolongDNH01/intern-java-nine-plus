@@ -27,66 +27,66 @@ import com.nineplus.pharmacy.constant.CommonConstants;
 @PropertySource("classpath:application.properties")
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private String PREFIX_TOKEN;
+	private String PREFIX_TOKEN;
 
-    private String SECRET_KEY;
+	private String SECRET_KEY;
 
-    private int JWT_EXPIRATION;
+	private int JWT_EXPIRATION;
 
-    private AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManage, String secretKey, String prefixToken, String jwtAge) {
-        this.authenticationManager = authenticationManage;
-        this.SECRET_KEY = secretKey;
-        this.PREFIX_TOKEN = prefixToken;
-        this.JWT_EXPIRATION = Integer.parseInt(jwtAge);
-    }
+	public CustomAuthenticationFilter(AuthenticationManager authenticationManage, String secretKey, String prefixToken,
+			String jwtAge) {
+		this.authenticationManager = authenticationManage;
+		this.SECRET_KEY = secretKey;
+		this.PREFIX_TOKEN = prefixToken;
+		this.JWT_EXPIRATION = Integer.parseInt(jwtAge);
+	}
 
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-        throws AuthenticationException {
-        String requestData = "";
-        try {
-            requestData = request.getReader().lines().collect(Collectors.joining());
-        } catch (IOException ex) {
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+			throws AuthenticationException {
+		String requestData = "";
+		try {
+			requestData = request.getReader().lines().collect(Collectors.joining());
+		} catch (IOException ex) {
 
-        }
-        JSONObject loginInfor = new JSONObject(requestData);
-        String username = loginInfor.getString(CommonConstants.Authentication.USERNAME);
-        String password = loginInfor.getString(CommonConstants.Authentication.PASSWORD);
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
-        Authentication auth = authenticationManager.authenticate(authToken);
+		}
+		JSONObject loginInfor = new JSONObject(requestData);
+		String username = loginInfor.getString(CommonConstants.Authentication.USERNAME);
+		String password = loginInfor.getString(CommonConstants.Authentication.PASSWORD);
+		
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
+		Authentication auth = authenticationManager.authenticate(authToken);
+		
+		return auth;
+	}
 
-        return auth;
-    }
-
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-        Authentication authResult) throws IOException, ServletException {
-        User user = (User) authResult.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
-        String accessToken = JWT.create()
-            .withSubject(user.getUsername())
-            .withExpiresAt(new Date(System.currentTimeMillis() + JWT_EXPIRATION * 1000))
-            .withIssuer(request.getRequestURL().toString())
-            .withClaim(CommonConstants.Authentication.ROLES, user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-            .sign(algorithm);
-        String refreshToken = JWT.create()
-            .withSubject(user.getUsername())
-            .withExpiresAt(new Date(System.currentTimeMillis() + JWT_EXPIRATION * 1000))
-            .withIssuer(request.getRequestURL().toString())
-            .sign(algorithm);
-        Cookie accessCookie = new Cookie(CommonConstants.Authentication.ACCESS_COOKIE, accessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(false);
-        accessCookie.setMaxAge(JWT_EXPIRATION * 1000);
-        Cookie refreshCookie = new Cookie(CommonConstants.Authentication.REFRESH_COOKIE, refreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false);
-        refreshCookie.setMaxAge(JWT_EXPIRATION * 1000);
-        response.addCookie(refreshCookie);
-        response.addCookie(accessCookie);
-        response.addHeader(CommonConstants.Authentication.PREFIX_TOKEN, PREFIX_TOKEN);
-    }
+	@Override
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			Authentication authResult) throws IOException, ServletException {
+		User user = (User) authResult.getPrincipal();
+		Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+		String accessToken = JWT.create().withSubject(user.getUsername())
+				.withExpiresAt(new Date(System.currentTimeMillis() + JWT_EXPIRATION * 1000))
+				.withIssuer(request.getRequestURL().toString())
+				.withClaim(CommonConstants.Authentication.ROLES,
+						user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+				.sign(algorithm);
+		String refreshToken = JWT.create().withSubject(user.getUsername())
+				.withExpiresAt(new Date(System.currentTimeMillis() + JWT_EXPIRATION * 1000))
+				.withIssuer(request.getRequestURL().toString()).sign(algorithm);
+		Cookie accessCookie = new Cookie(CommonConstants.Authentication.ACCESS_COOKIE, accessToken);
+		accessCookie.setHttpOnly(true);
+		accessCookie.setSecure(false);
+		accessCookie.setMaxAge(JWT_EXPIRATION * 1000);
+		Cookie refreshCookie = new Cookie(CommonConstants.Authentication.REFRESH_COOKIE, refreshToken);
+		refreshCookie.setHttpOnly(true);
+		refreshCookie.setSecure(false);
+		refreshCookie.setMaxAge(JWT_EXPIRATION * 1000);
+		response.addCookie(refreshCookie);
+		response.addCookie(accessCookie);
+		response.addHeader(CommonConstants.Authentication.PREFIX_TOKEN, PREFIX_TOKEN);
+	}
 
 }

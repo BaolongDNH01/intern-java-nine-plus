@@ -30,7 +30,8 @@ public class TUserServices implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+        authorities.add(new SimpleGrantedAuthority(user.getTRole().getRoleName()));
+        
         return new User(user.getUserNm(), user.getPassword(), authorities);
     }
     
