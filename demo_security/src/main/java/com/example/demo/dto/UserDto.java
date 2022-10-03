@@ -27,13 +27,15 @@ public class UserDto implements Validator {
 	@Pattern(regexp = "^([A-ZÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẬẪÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴĐ]"
 			+ "[a-záàảãạăắằẳẵặâấầẩậẫéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ]*"
 			+ "( ))*([A-ZÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẬẪÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴĐ]"
-			+ "[a-záàảãạăắằẳẵặâấầẩậẫéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ]*)$", message = "Enter letters only.")
+			+ "[a-záàảãạăắằẳẵặâấầẩậẫéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ]*)$", 
+			message = "Enter letters only, start each word by an uppercase.")
 	private String fullname;
 
 	@NotBlank(message = "Enter your username.")
 	private String username;
 
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@-_])(?=\\S)[a-zA-Z0-9@\\-_]{8,20}$", message = "Enter from 8 to 20 characters, combine uppercase(s), lowercase(s), digit(s) and special character(s) (@-_).")
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@-_])(?=\\S)[a-zA-Z0-9@\\-_]{8,20}$", 
+			message = "Enter from 8 to 20 characters, combine uppercase(s), lowercase(s), digit(s) and special character(s) (@-_).")
 	private String password;
 
 	private Date dateOfBirth;
