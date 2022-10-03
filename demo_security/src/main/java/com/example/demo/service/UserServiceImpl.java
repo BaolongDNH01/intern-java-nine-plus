@@ -13,8 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.Role;
-import com.example.demo.domain.User;
+import com.example.demo.exception.BussinessException;
+import com.example.demo.model.Role;
+import com.example.demo.model.User;
 import com.example.demo.repo.RoleRepo;
 import com.example.demo.repo.UserRepo;
 
@@ -32,8 +33,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	
 	@Override
-	public User saveUser(User user) {
-		log.info("Saving new user {} to the database", user.getName());
+	public User saveUser(User user) throws BussinessException {
+		log.info("Saving new user {} to the database", user.getFullname());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public List<User> getUsers() {
-		log.info("Fetching all users");
+//		log.info("Fetching all users");
 		return userRepo.findAll();
 	}
 

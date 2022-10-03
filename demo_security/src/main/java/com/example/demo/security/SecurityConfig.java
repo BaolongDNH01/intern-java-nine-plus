@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final UserDetailsService userDetailsService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	public static String PUBLIC_URL[] = {"api/login","/api/register"};
+	public static String IGNORE_URL[] = {};
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -38,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeHttpRequests().antMatchers("api/login/**").permitAll();
+		http.authorizeHttpRequests().antMatchers(PUBLIC_URL).permitAll();
 		http.authorizeHttpRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
 		http.authorizeHttpRequests().antMatchers(HttpMethod.POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER");
 		http.authorizeHttpRequests().anyRequest().authenticated();
